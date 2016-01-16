@@ -1,0 +1,20 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Tasks
+GET     /eventsWS                  @controllers.AppController.eventsWS
+GET     /*file                  controllers.Assets.at(path="/public/analytics", file)
+#POST    /bbf/*file                  controllers.Assets.at(path="/public/bbf", file)
+#GET     /xsl.xslx                   @controllers.AppController.xslAction
+#POST    /competitors                @controllers.AppController.addCompetitorAction
+#GET     /competitors                @controllers.AppController.getCompetitorsAction
+#GET    /start                      controllers.AppController.start
+#GET    /stop                       controllers.AppController.stop
+
+#GET /assets/*file controllers.Assets.at(path="/public", file)
+
+# Map static resources from the /public folder to the /assets URL path
+#GET     /assets/javascripts/routes  @controllers.AppController.javascriptRoutes
+#GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
