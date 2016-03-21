@@ -1,18 +1,19 @@
-package org.alfresco.analytics
+package org.alfresco.analytics.actors
 
 import akka.actor.Actor
-import com.datastax.spark.connector.SomeColumns
+import com.datastax.spark.connector.{toNamedColumnRef, toRDDFunctions, _}
 import com.sclasen.akka.kafka.StreamFSM
 import edu.stanford.nlp.ling.CoreAnnotations._
 import edu.stanford.nlp.pipeline.Annotation
 import org.alfresco.analytics.MyJsonProtocol._
-import org.apache.hadoop.io.{Text, LongWritable}
+import org.alfresco.analytics._
+import org.apache.hadoop.io.{LongWritable, Text}
 import org.apache.hadoop.mapred.TextInputFormat
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.joda.time.DateTime
 import spray.json._
-import com.datastax.spark.connector.{toNamedColumnRef, toRDDFunctions, _}
+
 import scala.collection.JavaConverters._
 
 class Entities(sc:SparkContext, kafkaSink:KafkaSink) extends Actor with DataSelection {

@@ -1,5 +1,6 @@
 package org.alfresco.analytics
 
+import org.apache.spark.SparkConf
 import com.datastax.spark.connector.cql.CassandraConnector
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.streaming.{Seconds, StreamingContext}

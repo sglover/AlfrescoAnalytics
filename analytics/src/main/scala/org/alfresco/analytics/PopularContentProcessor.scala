@@ -9,7 +9,7 @@ import org.apache.spark.rdd.RDD._
 /**
   * Created by sglover on 14/12/2015.
   */
-class PopularContent(path:String) extends Serializable with Logging with Sparky with DB {
+class PopularContentProcessor(path:String) extends Serializable with Logging with Sparky with DB {
   val dir = new File(path)
   val paths = getListOfFiles(dir)
 
@@ -256,7 +256,7 @@ class PopularContent(path:String) extends Serializable with Logging with Sparky 
   }
 }
 
-object PopularContent {
+object PopularContentProcessor {
 //  def apply(path:String):PopularContent = {
 //    new PopularContent(path)
 //  }

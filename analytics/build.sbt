@@ -1,3 +1,4 @@
+import sbt.ExclusionRule
 import sbt.Keys._
 
 organization  := "org.alfresco"
@@ -27,8 +28,8 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= {
-//  val sparkV  = "1.5.1"
-  val sparkV  = "1.5.2"
+//  val sparkV  = "1.5.2"
+  val sparkV  = "1.6.0"
 
   Seq(
 //    "com.typesafe.akka" %% "akka-remote" % akkaV             withSources() withJavadoc,
@@ -39,7 +40,7 @@ libraryDependencies ++= {
     "org.alfresco" % "alfresco-core" % "5.6" exclude("com.sun.xml.bind", "jaxb-impl"),
     "org.apache.spark" %% "spark-sql"  % sparkV % "provided",
     "org.apache.spark"   %% "spark-core"            % sparkV % "provided",
-    "org.apache.spark"   %% "spark-launcher"        % sparkV,
+    "org.apache.spark"   %% "spark-launcher"        % sparkV % "provided",
     "org.apache.spark" %% "spark-streaming" % sparkV % "provided",
     "com.sclasen" %% "akka-kafka" % "0.1.0" % "compile",
     "org.apache.spark" %% "spark-streaming-kafka" % sparkV % "provided",
@@ -49,14 +50,16 @@ libraryDependencies ++= {
     "edu.stanford.nlp" % "stanford-corenlp" % "3.5.0" classifier "models",
     //"com.databricks" %% "spark-csv" % "1.3.0",
     "org.slf4j" % "slf4j-log4j12" % "1.7.5",
-    "com.github.tototoshi" %% "scala-csv" % "1.3.0-SNAPSHOT",
-    "org.apache.spark" %% "spark-streaming-kafka" % sparkV,
+    "com.github.tototoshi" %% "scala-csv" % "1.3.0",
     "org.alfresco" %% "alfrescoanalyticscommon" % "1.0-SNAPSHOT",
     "io.spray" %%  "spray-json" % "1.3.2",
     "com.alfresco" % "micro-transformers-client" % "0.1-SNAPSHOT" excludeAll(
       ExclusionRule(organization = "ch.qos.logback"),
       ExclusionRule(organization = "org.slf4j")),
-    "org.apache.chemistry.opencmis" % "chemistry-opencmis-client-impl" % "0.13.0"
+    "org.apache.chemistry.opencmis" % "chemistry-opencmis-client-impl" % "0.13.0",
+    ("org.apache.spark" %% "spark-streaming-kinesis-asl" % sparkV)
+      .exclude("org.apache.spark", "spark-core_2.11")
+      .exclude("org.apache.spark", "spark-streaming_2.11")
   )
 }
 
@@ -92,9 +95,9 @@ parallelExecution in Test := false
 
 fork in run := true
 
-enablePlugins(JavaServerAppPackaging)
+//enablePlugins(JavaServerAppPackaging)
 
-assemblyMergeStrategy in assembly <<= (assemblyMergeStrategy in assembly) { (old) => 
+assemblyMergeStrategy in assembly <<= (assemblyMergeStrategy in assembly) { (old) =>
 {
   case n PathList("META-INF", "ECLIPSEF.INF") => MergeStrategy.first
   case n PathList("META-INF", "ECLIPSEF.RSA") => MergeStrategy.first
@@ -129,7 +132,7 @@ assemblyMergeStrategy in assembly <<= (assemblyMergeStrategy in assembly) { (old
   case PathList("org", "apache", "spark", "unused", "UnusedStubClass.class") => MergeStrategy.first
   case PathList("org", "alfresco", "analytics", xs @ _*) => MergeStrategy.first
   case x => old(x)
-  }
+}
 }
 
 assemblyExcludedJars in assembly := {

@@ -135,47 +135,47 @@ class KafkaActor extends Actor with DB with CMISSession {
       }
   }
 
-  def convert(nodeId:String, mimeType:MimeType, nodePath:String): Future[String] = {
-    val objectId = new ObjectIdImpl(nodeId)
+//  def convert(nodeId:String, mimeType:MimeType, nodePath:String): Future[String] = {
+//    val objectId = new ObjectIdImpl(nodeId)
+//
+//    println(s"Content update $nodeId $mimeType $nodePath")
+//
+//    val temp = TempDirectory.createTemporaryFile("kafka")
+//    temp.deleteOnExit()
+//    println(s"Created temporary file $temp")
+//    val path = temp.getAbsolutePath()
+//    val os = new FileOutputStream(temp)
+//
+//    println(s"Getting binary content for $nodeId $mimeType $path")
+//
+//    val cs = cmisSession.getContentStream(objectId)
+//    IOUtils.copy(cs.getStream(), os)
+//
+//    println(s"Got binary content for $nodeId $mimeType $path")
+//
+//    val p = Promise[String]
+//    val f = p.future
+//
+//    Future {
+//      val c = new C(p)
+//      t.sendTransform(path, mimeType, c)
+////      ProducerMessage(c.getPath())
+//    }
+//
+//    f
+//  }
 
-    println(s"Content update $nodeId $mimeType $nodePath")
-
-    val temp = TempDirectory.createTemporaryFile("kafka")
-    temp.deleteOnExit()
-    println(s"Created temporary file $temp")
-    val path = temp.getAbsolutePath()
-    val os = new FileOutputStream(temp)
-
-    println(s"Getting binary content for $nodeId $mimeType $path")
-
-    val cs = cmisSession.getContentStream(objectId)
-    IOUtils.copy(cs.getStream(), os)
-
-    println(s"Got binary content for $nodeId $mimeType $path")
-
-    val p = Promise[String]
-    val f = p.future
-
-    Future {
-      val c = new C(p)
-      t.sendTransform(path, mimeType, c)
-//      ProducerMessage(c.getPath())
-    }
-
-    f
-  }
-
-  class C(p:Promise[String]) extends TransformationCallback {
-    override def onError(r:TransformRequest, t:Throwable): Unit = {
-      p failure t
-    }
-
-    override def transformCompleted(transformResponse: TransformResponse): Unit = {
-      val textPath = transformResponse.getTargets.get(0).getPath()
-      println(s"textPath=$textPath")
-      p success textPath
-    }
-  }
+//  class C(p:Promise[String]) extends TransformationCallback {
+//    override def onError(r:TransformRequest, t:Throwable): Unit = {
+//      p failure t
+//    }
+//
+//    override def transformCompleted(transformResponse: TransformResponse): Unit = {
+//      val textPath = transformResponse.getTargets.get(0).getPath()
+//      println(s"textPath=$textPath")
+//      p success textPath
+//    }
+//  }
 
   val extractNodeIdFolder = """folder-details?nodeRef=workspace%3A%2F%2FSpacesStore%2F(.+)""".r
   val extractNodeId = """document-details\?nodeRef=workspace%3A%2F%2FSpacesStore%2F(.+)""".r

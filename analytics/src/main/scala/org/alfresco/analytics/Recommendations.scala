@@ -5,6 +5,8 @@ import org.apache.spark.rdd._
 
 /**
   * Created by sglover on 11/01/2016.
+  *
+  * Based om https://databricks-training.s3.amazonaws.com/movie-recommendation-with-mllib.html
   */
 trait Recommendations extends SparkDataSelection {
   this: Sparky =>

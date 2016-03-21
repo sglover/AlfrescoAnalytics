@@ -23,10 +23,10 @@ object Transform {
   */
 class Transform(actorSystem:ActorSystem) {
   val routers = List("localhost:2551")
-    val config:ClientConfig = new ClientConfig("localhost", 2192, routers)
-//  val config:ClientConfig = new ClientConfig("localhost", null, routers)
-//  val client:TransformationClient = new TransformationClient(config, actorSystem)
-val client:TransformationClient = new TransformationClient(config)
+  val config:ClientConfig = new ClientConfig("localhost", 2192, routers)
+  //  val config:ClientConfig = new ClientConfig("localhost", null, routers)
+  //  val client:TransformationClient = new TransformationClient(config, actorSystem)
+  val client:TransformationClient = new TransformationClient(config)
 
   def closeClient() =
   {
