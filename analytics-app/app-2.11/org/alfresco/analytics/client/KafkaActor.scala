@@ -21,7 +21,7 @@ import org.apache.commons.io.IOUtils
 import org.apache.kafka.common.serialization.{StringSerializer, StringDeserializer}
 import org.joda.time.DateTime
 import org.reactivestreams.{Subscriber, Publisher}
-import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
+import play.api.libs.json._
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{Promise, Future}
@@ -180,9 +180,10 @@ class KafkaActor extends Actor with DB with CMISSession {
   val extractNodeIdFolder = """folder-details?nodeRef=workspace%3A%2F%2FSpacesStore%2F(.+)""".r
   val extractNodeId = """document-details\?nodeRef=workspace%3A%2F%2FSpacesStore%2F(.+)""".r
 
-  def getNodeId(js:JsValue): Option[String] = {
+  //: Option[String]
+  def getNodeId(js:JsValue) = {
     (js \ "nodeId").validate[String] match {
-      case JsError => {
+      case e:JsError => {
         (js \ "activityData" \ "page").validate[String] match {
           case s: JsSuccess[String] => {
             s.get match {
@@ -194,7 +195,7 @@ class KafkaActor extends Actor with DB with CMISSession {
           case e: JsError => None
         }
       }
-      case JsSuccess(nodeId) => {
+      case nodeId: JsSuccess[String] => {
         Some(nodeId)
       }
     }
@@ -202,9 +203,9 @@ class KafkaActor extends Actor with DB with CMISSession {
 
   def getMimeType(js:JsValue): Option[MimeType] = {
     (js \ "mimeType").validate[String] match {
-      case JsError => None
-      case JsSuccess(mimeType) => {
-        Some(MimeType.INSTANCES.getByMimetype(mimeType))
+      case e:JsError => None
+      case mimeType:JsSuccess[String] => {
+        Some(MimeType.INSTANCES.getByMimetype(mimeType.get))
       }
     }
   }
@@ -212,11 +213,11 @@ class KafkaActor extends Actor with DB with CMISSession {
   def getNodePath(js:JsValue): Option[String] = {
     val nodePaths = (js \ "paths").validate[List[String]]
     nodePaths match {
-      case JsError => None
-      case JsSuccess(paths) => {
-        paths.size match {
+      case e:JsError => None
+      case paths:JsSuccess[List[String]] => {
+        paths.get.size match {
           case 0 => None
-          case _ => Some(paths(0))
+          case _ => Some(paths.get(0))
         }
       }
     }
@@ -230,16 +231,24 @@ class KafkaActor extends Actor with DB with CMISSession {
     )
 
     (json \ "@class").validate[String] match {
-      case "org.alfresco.events.types.ActivityEvent" => {
-        (json \ "type").validate[String] match {
-          case "activity.org.alfresco.documentlibrary.file-updated" => {
-            val nodePath = getNodePath(json).getOrElse("")
-            getNodeId(json) match {
-              case Some(nodeId) => {
-                getMimeType(json) match {
-                  case Some(mimeType) => {
-                    convert(nodeId, mimeType, nodePath) onSuccess {
-                      case m => Some(ProducerMessage(m))
+      case x:JsSuccess[String] => {
+        x.get match {
+          case "org.alfresco.events.types.ActivityEvent" => {
+            (json \ "type").validate[String] match {
+              case y:JsSuccess[String] => {
+                y.get match {
+                  case "activity.org.alfresco.documentlibrary.file-updated" => {
+                    val nodePath = getNodePath(json).getOrElse("")
+                    getNodeId(json) match {
+                      case Some(nodeId) => {
+                        getMimeType(json) match {
+                          case Some(mimeType) => {
+                            convert(nodeId, mimeType, nodePath) onSuccess {
+                              case m => Some(ProducerMessage(m))
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 }

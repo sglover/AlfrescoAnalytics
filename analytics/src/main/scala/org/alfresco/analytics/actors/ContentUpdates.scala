@@ -15,13 +15,11 @@ import spray.json._
 /**
   * Created by sglover on 17/01/2016.
   */
-class ContentUpdates(kafkaSink:KafkaSink) extends Actor with CMISOperations with DataSelection {
+class ContentUpdates(kafkaSink:KafkaSink, repoUsername:String, repoPassword:String) extends Actor with CMISOperations with DataSelection {
   //with ActorHelper {
 
 //  lazy val cs = new FileContentSto
-  lazy val t = new Transform(context.system)
-  lazy val repoUsername = "admin"
-  lazy val repoPassword = "admin"
+  lazy val t = Transform(repoUsername, repoPassword)
 
   override def preStart() = {
     println("")
@@ -46,7 +44,7 @@ class ContentUpdates(kafkaSink:KafkaSink) extends Actor with CMISOperations with
 
       println(s"Getting binary content for $nodeId $mimeType $path")
 
-      val cs = cmisSession.getContentStream(objectId)
+      val cs = getCMISSession(repoUsername, repoPassword).getContentStream(objectId)
       IOUtils.copy(cs.getStream(), os)
 
       println(s"Got binary content for $nodeId $mimeType $path")

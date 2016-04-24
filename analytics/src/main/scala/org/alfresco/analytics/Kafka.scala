@@ -19,7 +19,7 @@ import spray.json._
 /**
   * Created by sglover on 17/12/2015.
   */
-class Kafka() extends DB with Sparky with Serializable with Calculations with SparkDataSelection with Recommendations {
+class Kafka(repoUsername:String, repoPassword:String) extends DB with Sparky with Serializable with Calculations with SparkDataSelection with Recommendations {
   this: Sparky =>
 
 //  @transient val log = LogManager.getLogger(classOf[Kafka])
@@ -48,7 +48,8 @@ class Kafka() extends DB with Sparky with Serializable with Calculations with Sp
   @transient val config = ConfigFactory.load()
 
   @transient val actorSystem = ActorSystem("ContentActorSystem", config.getConfig("ContentActorSystem").withFallback(config))
-  @transient val contentUpdatesActor = actorSystem.actorOf(Props(new ContentUpdates(kafkaSink)), "contentUpdates")
+  @transient val contentUpdatesActor = actorSystem.actorOf(Props(new ContentUpdates(kafkaSink,
+    repoUsername, repoPassword)), "contentUpdates")
 
   // listen for repo activities events and inform the content update actor (which will transform to text)
   @transient val activitiesConsumerProps = AkkaConsumerProps.forSystem(
@@ -65,7 +66,7 @@ class Kafka() extends DB with Sparky with Serializable with Calculations with Sp
   activitiesConsumer.start()  //returns a Future[Unit] that completes when the connector is started
 
   // listen for transformed text content events and inform the entities actor
-  @transient val entitiesActor = actorSystem.actorOf(Props(new Entities(sc, kafkaSink)), "entitiesActor")
+  @transient val entitiesActor = actorSystem.actorOf(Props(new Entities(sc, kafkaSink, repoUsername, repoPassword)), "entitiesActor")
   @transient val textContentConsumerProps = AkkaConsumerProps.forSystem(
     system = actorSystem,
     zkConnect = "localhost:2181",
@@ -318,8 +319,8 @@ class Kafka() extends DB with Sparky with Serializable with Calculations with Sp
 }
 
 object Kafka {
-  def apply(): Kafka = {
-    new Kafka()
+  def apply(repoUsername:String, repoPassword:String): Kafka = {
+    new Kafka(repoUsername, repoPassword)
   }
 //  private def shutdown(): Unit = if (!isTerminated) {
 //    import akka.pattern.ask
@@ -338,6 +339,6 @@ object Kafka {
 //  }
 
   def main(args: Array[String]): Unit = {
-    Kafka()
+    Kafka("admin", "admin")
   }
 }

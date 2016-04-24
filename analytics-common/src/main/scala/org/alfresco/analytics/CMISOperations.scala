@@ -11,13 +11,10 @@ import org.apache.chemistry.opencmis.commons.enums.BindingType
   * Created by sglover on 07/01/2016.
   */
 trait CMISOperations {
-  val repoUsername:String
-  val repoPassword:String
-
   private lazy val sessionFactory = SessionFactoryImpl.newInstance()
-  lazy val cmisSession = getCMISSession()
+//  lazy val cmisSession = getCMISSession()
 
-  private def getCMISSession(): Session = {
+  def getCMISSession(repoUsername:String, repoPassword:String): Session = {
     val parameters = new util.HashMap[String, String]()
     parameters.put(SessionParameter.BROWSER_URL, "http://localhost:8080/alfresco/api/-default-/public/cmis/versions/1.1/browser")
     parameters.put(SessionParameter.BINDING_TYPE, BindingType.BROWSER.value())

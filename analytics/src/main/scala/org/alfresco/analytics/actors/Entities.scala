@@ -16,7 +16,7 @@ import spray.json._
 
 import scala.collection.JavaConverters._
 
-class Entities(sc:SparkContext, kafkaSink:KafkaSink) extends Actor with DataSelection {
+class Entities(sc:SparkContext, kafkaSink:KafkaSink, repoUsername:String, repoPassword:String) extends Actor with DataSelection {
   //with ActorHelper {
 
 //  object Formats extends DefaultJsonProtocol {
@@ -24,9 +24,7 @@ class Entities(sc:SparkContext, kafkaSink:KafkaSink) extends Actor with DataSele
 //  }
 //  import Formats._
 
-  lazy val t = new Transform(context.system)
-  lazy val repoUsername = "admin"
-  lazy val repoPassword = "admin"
+  lazy val t = new Transform(repoUsername, repoPassword)
 
   override def preStart() = {
     println("")

@@ -59,6 +59,8 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-slf4j" % "2.3.9" % "compile",
     "org.slf4j" % "log4j-over-slf4j" % "1.7.10" % "compile",
     "org.alfresco" %% "alfrescoanalyticscommon" % "1.0-SNAPSHOT",
+    "org.alfresco.extensions" % "alfresco-extensions-contentstore" % "1.0-SNAPSHOT",
+    "com.google.guava" % "guava" % "14.0.1",
     "org.apache.chemistry.opencmis" % "chemistry-opencmis-client-impl" % "0.13.0",
     "org.springframework.social" % "spring-social-alfresco-bm" % "0.5.5-SNAPSHOT",
     "com.alfresco" % "micro-transformers-client" % "0.1-SNAPSHOT" excludeAll(
